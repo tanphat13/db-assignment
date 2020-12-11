@@ -5,7 +5,7 @@
     $password = $_SESSION['password'];
     $dbname = "hospital";
     $q = $_GET["search"];
- 
+    
     // Create connection
     
     $sql = new mysqli($servername, $username, $password, $dbname);

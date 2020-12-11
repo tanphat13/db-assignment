@@ -13,18 +13,21 @@
     $sql = "SELECT * FROM user";
     $result = $conn->query($sql);
     $data = $result->fetch_all();
+    
     if ($result->num_rows >0) {
         foreach ($data as $row) {
+            
             if (isset($_POST['username']) && isset($_POST['password'])) {
-                $username = $_POST['username'];
-                $password = $_POST['password'];
-                if ($username == $row['1'] && $password == $row['2']) {
-                    //setcookie($username, 100, ''. "/");
-                    session_start();
+                $input_username = $_POST['username'];
+                $input_password = $_POST['password'];
+                if ($input_username == $row['1'] && $input_password == $row['2']) {
+                    // session_start();
                     $_SESSION["username"] = $row['3'];
                     $_SESSION["password"] = $row['4'];                 
                     $flag = 1;
+                    echo var_dump($_SESSION);
                     break;
+                    
                 }
             }
         }
