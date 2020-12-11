@@ -1,16 +1,15 @@
 <?php
-
-    $servername = "localhost";
-    $username = "root";
-    $password = "Tanphat123";
-    $dbname = "hospital";
-    //$ID = $_GET["ID"];
-    
+    if ($_SESSION == null) {
+        echo "<h1>You have not login </h1>";
+        echo "<a href=index.php?page=login>Click here to login</a>";
+    }
+    else {
     echo "<form class='search'>
             <input type='text' class='search-bar' placeholder='Search doctor' id='search_value' onkeyup='showLiveResult(this.value)'>
             <input type='button' class='btn' value='Search' id='search_all' onclick='showAllResult() ' />
             <div id='livesearch'></div>
         </form>";   
+    }
     // $conn = new mysqli($servername, $username, $password, $dbname);
     // if (substr($ID,0,2) == 'IP') {
     //     // $sql = "SELECT DISTINCT patient.patient_id, CONCAT(fname, ' ',lname) as Fullname, gender, address, sickroom, date_of_admission,diaganosis, date_of_discharge, result,

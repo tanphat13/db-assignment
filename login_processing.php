@@ -2,9 +2,9 @@
 <?php
     $flag = 0;
     $servername = "localhost";
-    $username = "manager";
-    $password = "manager";
-    $dbname = "hospital";
+    $username = "login";
+    $password = "login";
+    $dbname = "user";
     
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
@@ -17,18 +17,17 @@
         foreach ($data as $row) {
             if (isset($_POST['username']) && isset($_POST['password'])) {
                 $username = $_POST['username'];
-                $password = $_POST['password'   ];
+                $password = $_POST['password'];
                 if ($username == $row['1'] && $password == $row['2']) {
                     //setcookie($username, 100, ''. "/");
                     session_start();
-                    $_SESSION["user"] = $username;
-                    $_SESSION["permission"] = $row['3'];                 
+                    $_SESSION["username"] = $row['3'];
+                    $_SESSION["password"] = $row['4'];                 
                     $flag = 1;
                     break;
                 }
             }
         }
-        
         if ($flag == 1) {
             header('Location:index.php?page=search');
         }

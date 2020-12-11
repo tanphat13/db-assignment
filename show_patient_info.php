@@ -1,8 +1,8 @@
 <?php
 
     $servername = "localhost";
-    $username = "root";
-    $password = "Tanphat123";
+    $username = $_SESSION['username'];
+    $password = $_SESSION['password'];
     $dbname = "hospital";
     $ID = $_GET["ID"];
     

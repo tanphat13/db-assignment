@@ -1,9 +1,25 @@
-<form class='search'>
-<input type="text" class='search-bar' placeholder="Search patient" id="search_value" onkeyup="showLiveResult(this.value)">
-<input type="button" class='btn' value="Search" id="search_all" onclick="showAllResult() " />
-<div id="livesearch"></div>
-<div id="allsearch"></div>
-</form>
+<?php 
+
+if ($_SESSION == null) {
+  echo "<h1>You have not login </h1>";
+  echo "<a href=index.php?page=login>Click here to login</a>";
+}
+else {
+  echo "<form class='search'>
+  <input type='text' class='search-bar' placeholder='Search patient' id='search_value' onkeyup='showLiveResult(this.value)'>
+  <input type='button' class='btn' value='Search' id='search_all' onclick='showAllResult()' />
+  <div id='livesearch'></div>
+  <div id='allsearch'></div>
+  </form>";
+
+}
+?>
+  <!-- <form class='search'>
+  <input type="text" class='search-bar' placeholder="Search patient" id="search_value" onkeyup="showLiveResult(this.value)">
+  <input type="button" class='btn' value="Search" id="search_all" onclick="showAllResult() " />
+  <div id="livesearch"></div>
+  <div id="allsearch"></div>
+  </form> -->
 
 
 <script>

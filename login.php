@@ -2,7 +2,7 @@
     
     
     
-    <form class="loginform" action="login_processing.php" method="post">
+    <form class="loginform" action="index.php?page=login_processing" method="post">
         <fieldset> 
             <legend> Login Form </legend> <br> 
             <label for="username">Username:</label>

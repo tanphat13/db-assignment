@@ -1,7 +1,7 @@
 
 <?php
-    if (isset($_SESSION["user"])) {
-        echo $_SESSION["user"];
+    if (isset($_SESSION["username"])) {
+        echo $_SESSION["username"];
         session_unset();
         session_destroy();
         header('Location:index.php');    
