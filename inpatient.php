@@ -1,7 +1,7 @@
 <?php
      $servername = "localhost";
-     $username = $_SESSION['username'];
-     $password = $_SESSION['password'];
+     $username = $_SESSION["username"];
+     $password = $_SESSION["password"];
      $dbname = "hospital";
 
      $conn = new mysqli($servername, $username, $password, $dbname);

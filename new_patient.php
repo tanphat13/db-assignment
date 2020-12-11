@@ -4,6 +4,7 @@
         echo "<a href=index.php?page=login>Click here to login</a>";
     } 
     else {
+        echo var_dump($_SESSION);
         echo "
         <form class='new_patient' action='index.php?page=new_patient_processing' method='post'>
     <div class='form-container'> 
