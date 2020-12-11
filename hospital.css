@@ -10,9 +10,9 @@ body{
 .container{
     margin: 0px 60px;
     position: relative;
-    height: 100vh;
+    height: auto;
+    min-height: 1000px;
     width: 100%;
-    overflow-y: scroll;
 }
 .navbar {
     margin: 0;
@@ -95,17 +95,30 @@ body{
 }
 .medication_list .medication .data_item {
     padding-right: 2vw;
-   
 }
+
 .list_container {
-    border: solid;
+    margin: 2% 0;
+    border: 1px solid black;
+}
+
+.list_container .list_row {
+    padding: 1% 0;
+    border-bottom: 1px dashed #dedede;
     display: flex;
     
 }
-.list_container .data_item {
+
+.list_container .list_heading {
+    border-bottom: 2px solid #dedede;
+}
+
+.list_container .list_row .data_item {
+    padding-left: 1%;
     width: 10vw;
 }
-.list_container .data_item2 {
+.list_container .list_row .data_item2 {
+    padding-left: 1%;
     width: 15vw;
 }
 .container .section-container .new_patient{
@@ -180,39 +193,43 @@ body{
 .search_list .search_item a:hover {
     color: white;
 }
+
 .container .section-container .report_container {
-    display: flex;
-}
-.container .section-container .report_container .report_item {
-    border: solid pink;
-    width: 25vw;
-    font-size: 25px;
-}
-.personal_info {
-    font-size: 20px;
-}
-.container .content-container .report_container {
     margin: 2% 2%;
     width: 80%;
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
+    border-radius: 15px;
 }
-.container .content-container .report_container h6 {
+
+.container .section-container .report_container h6 {
     margin: 0;
     padding-left: 5%;
 }
-.container .content-container .report_container .report_row {
+
+.container .section-container .report_container .report_row {
     width: 100%;
     display: flex;
 }
-.container .content-container .report_container .report_row .report_item {
+.container .section-container .report_container .report_row .report_item {
+    padding: 2% 0;
     padding-left: 3%;
     width: 100%;
     border-top: 1px solid #dedede;
     font-size: 25px;
 }
-.container .content-container .report_container .report_row .strong {
+.container .section-container .report_container .report_row .strong {
+    margin: 0;
     font-weight: 600;
+}
+
+.report_container .report_row .strong {
+    margin: 0;
+    font-weight: 600;
+}
+
+.container .section-container .report_container .report_row .service-heading {
+    background-color: rgb(73, 183, 227);
+    color: white;
 }
 
 .search {

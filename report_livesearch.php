@@ -26,7 +26,7 @@
         
         $value .= "<div class=search_item> ";
         $value .= "<a href='index.php?page=show_report&ID=$row[0]'>";
-        $value .= "Doctor ID: " .$row['0'] ." Fullname: " .$row['1'] ." Phone: " .$row['2'] ;
+        $value .= "Patient ID: " .$row['0'] ." Fullname: " .$row['1'] ." Phone: " .$row['2'] ;
         $value .= "</a> </div>";    
         
     

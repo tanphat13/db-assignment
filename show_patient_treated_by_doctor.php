@@ -19,33 +19,64 @@
         $result = $conn->query($sql);
         $data = $result->fetch_all();
         if(sizeof($data) == 0) {
-            echo "<h2>This doctor have treated NO patient</h2>";
+            echo "<h2>This doctor have treated NO inpatient</h2>";
         }
        
-        echo "<div class='list_container'>";
-        echo "<div class='data_item'> " ."Patient ID" ."</div>" ;
-        echo "<div class='data_item'> "  ."Fullname"  ."</div>" ;
-        echo "<div class='data_item'> "  ."Gender "  ."</div>" ;
-        echo "<div class='data_item2'> "  ."Diaganosis"  ."</div>" ;
-        echo "<div class='data_item2'> "  ."Date of admission" ."</div>" ;
-        echo "<div class='data_item2'> " ."Date of discharge"  ."</div>" ;
-        echo "<div class='data_item'> " ."Sickroom"  ."</div>" ;            
-        echo "</div>";
+        echo "
+        <h3>Inpatient List</h3>
+        <div class='list_container'>
+        <div class='list_row list_heading'>
+            <div class='data_item'>Patient ID</div>
+            <div class='data_item'>Fullname</div>
+            <div class='data_item'>Gender</div>
+            <div class='data_item2'>Diagnosis</div>
+            <div class='data_item2'>Date of admission</div>
+            <div class='data_item2'>Date of discharge</div>
+            <div class='data_item'>Sickroom</div>
+        </div>";
         foreach($data as $row) {
-            echo "<div class='list_container'>";
-            echo "<div class='data_item'> " .$row[0] ."</div>" ;
-            echo "<div class='data_item'> " .$row[1] ."</div>" ;
-            echo "<div class='data_item'> " .$row[2] ."</div>" ;
-            echo "<div class='data_item2'> " .$row[3] ."</div>" ;
-            echo "<div class='data_item2'> " .explode(' ',$row[4])[0]  ."</div>" ;
-            echo "<div class='data_item2'> " .$row[5] ."</div>" ;
-            echo "<div class='data_item'> " .$row[6] ."</div>" ;            
-            echo "</div>";
-            
+            echo "
+            <div class='list_row'>
+                <div class='data_item'> " .$row[0] ."</div>
+                <div class='data_item'> " .$row[1] ."</div>
+                <div class='data_item'> " .$row[2] ."</div>
+                <div class='data_item2'> " .$row[3] ."</div>
+                <div class='data_item2'> " .explode(' ',$row[4])[0]  ."</div>
+                <div class='data_item2'> " .$row[5] ."</div>
+                <div class='data_item'> " .$row[6] ."</div>
+            </div>";
         }
+        echo "</div>";
 
-       
-
-   
-
+        $sql = "SELECT patient.patient_id, CONCAT(fname, ' ', lname) as Fullname, patient.gender, 
+        diagnosis, examination_date, second_exam_date FROM patient JOIN exams ON patient.patient_id = exams.outpatient_id 
+        JOIN examination ON examination.examination_id = exams.examination_id WHERE exams.doctor_id = '$ID'";
+        $result = $conn->query($sql);
+        $data = $result->fetch_all();
+        if(sizeof($data) == 0) {
+            echo "<h2>This doctor have treated NO outpatient</h2>";
+        }
+        echo "
+        <h3>Outpatient List</h3>
+        <div class='list_container'>
+        <div class='list_row list_heading'>
+            <div class='data_item'>Patient ID</div>
+            <div class='data_item'>Fullname</div>
+            <div class='data_item'>Gender</div>
+            <div class='data_item2'>Diagnosis</div>
+            <div class='data_item2'>Examination date</div>
+            <div class='data_item2'>Second Examination date</div>
+        </div>";
+        foreach($data as $row) {
+            echo "
+            <div class='list_row'>
+                <div class='data_item'> " .$row[0] ."</div>
+                <div class='data_item'> " .$row[1] ."</div>
+                <div class='data_item'> " .$row[2] ."</div>
+                <div class='data_item2'> " .$row[3] ."</div>
+                <div class='data_item2'> " .$row[4]  ."</div>
+                <div class='data_item2'> " .$row[5] ."</div>
+            </div>";
+        }
+        echo "</div>";
 ?>

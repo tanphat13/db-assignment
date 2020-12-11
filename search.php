@@ -21,7 +21,7 @@ function showLiveResult(str) {
       document.getElementById("livesearch").style.border="1px solid #A5ACB2";
     }
   }
-  xmlhttp.open("GET","livesearch.php?search="+str,true);
+  xmlhttp.open("GET","allsearch.php?search="+str,true);
   xmlhttp.send();
 }
 
@@ -34,7 +34,7 @@ function showAllResult() {
     }
   }
   str = document.getElementById("search_value").value;
-  xmlhttp.open("GET","allsearch.php?allsearch="+str,true);
+  xmlhttp.open("GET","show_patient_info.php?allsearch="+str,true);
   xmlhttp.send();
   document.getElementById("search_value").value = '';
   document.getElementById("livesearch").innerHTML = "";
