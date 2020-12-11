@@ -1,0 +1,238 @@
+body{
+    margin: 0%;
+    padding: 0%;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+ 
+}
+
+.container{
+    margin: 0px 60px;
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    overflow-y: scroll;
+}
+.navbar {
+    margin: 0;
+    padding: 0;
+    background-color: skyblue;
+    border: solid;
+    border-color: black;
+    font-size: 120%;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.content {
+    height: 85%;
+}
+
+.navbar li {
+    padding: 2% 2%;
+    display: inline-flex;
+    align-items: center;
+}
+
+.navbar .header {
+    border-right: 1px solid #dedede;
+    font-size: 140%;
+    color: white;
+}
+
+.navbar li a {
+    text-decoration: none;
+    color: white;
+}
+.navbar li a:hover {
+    background-color: palegreen;
+}
+.section-container {
+    height: 100%;
+    margin: 0;
+}
+.section-container .homepage {
+    display: flex;
+}
+
+.footer {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    bottom: 0;
+    text-align: center;
+    background-color: skyblue;
+    color: white;
+    font-size: 120%;
+}
+
+.footer p {
+    padding: 2% 0;
+}
+
+.personal_info {
+    border: solid;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+}
+.medication_list {
+    border: solid ;
+    
+}
+.medication_list .medication_header{
+    display: flex;
+    
+}.medication_list .medication_header .data_item{
+    
+    padding-left: 1vw;
+}
+.medication_list .medication {
+    color: black;
+   display: flex;
+}
+.medication_list .medication .data_item {
+    padding-right: 2vw;
+   
+}
+.list_container {
+    border: solid;
+    display: flex;
+    
+}
+.list_container .data_item {
+    width: 10vw;
+}
+.list_container .data_item2 {
+    width: 15vw;
+}
+.container .section-container .new_patient{
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    margin: 0;
+    width: 60%;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+}
+
+.container .section-container .new_patient .form-container {
+    padding: 2%;
+}
+
+.container .section-container .new_patient .form-container .form-item {
+    margin: 2% 0;
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+}
+.container .section-container .new_patient .form-container .form-item .option {
+    width: 60%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .section-container .new_patient .form-container .form-item .option input {
+    width: 10%;
+}
+
+.container .section-container .new_patient .form-container .form-item input{
+    width: 60%;
+}
+
+.container .section-container .new_patient .form-container .form-item select{
+    width: 61%;
+}
+
+.container .section-container .new_patient .form-container label{
+    width: 30%;
+}
+
+.container .section-container .new_patient .form-container .btn {
+    margin: 2% 25%;
+    padding: 2% 25%;
+    width: fit-content;
+    font-size: 70%;
+    background: rgba(192, 192, 192, 0.3);
+    border: none;
+}
+
+.container .section-container .new_patient .form-container .btn:hover {
+    color: white;
+    background-color: powderblue;
+}
+
+.search_list .search_item {
+    border: solid;
+}
+
+.search_list .search_item a{
+    width: 100%;
+    color: black;
+    text-decoration: none;
+}
+.search_list .search_item:hover {
+    background-color: #557A95;
+}
+.search_list .search_item a:hover {
+    color: white;
+}
+.container .section-container .report_container {
+    display: flex;
+}
+.container .section-container .report_container .report_item {
+    border: solid pink;
+    width: 25vw;
+    font-size: 25px;
+}
+.personal_info {
+    font-size: 20px;
+}
+.container .content-container .report_container {
+    margin: 2% 2%;
+    width: 80%;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+}
+.container .content-container .report_container h6 {
+    margin: 0;
+    padding-left: 5%;
+}
+.container .content-container .report_container .report_row {
+    width: 100%;
+    display: flex;
+}
+.container .content-container .report_container .report_row .report_item {
+    padding-left: 3%;
+    width: 100%;
+    border-top: 1px solid #dedede;
+    font-size: 25px;
+}
+.container .content-container .report_container .report_row .strong {
+    font-weight: 600;
+}
+
+.search {
+    margin-top: 2%;
+    margin-left: 10%;
+    width: 80%;
+}
+
+.search .search-bar {
+    width: 80%;
+    font-size: 80%;
+}
+
+.search .btn {
+    font-size: 80%;
+    background: rgba(192, 192, 192, 0.3);
+    border: none;
+}
+
+.search .btn:hover {
+    color: white;
+    background-color: powderblue;
+}

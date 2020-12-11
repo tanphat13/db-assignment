@@ -1,0 +1,25 @@
+
+form {
+    box-sizing: border-box;
+    margin-left: 35%;
+    margin-right: 35%;
+}
+legend {
+    text-align: center;
+}
+
+label {
+    width: 120px;
+    display: inline-block;
+    text-align: left;
+}
+
+table, th, td {
+    width: 180px;
+    height: 60px;
+    border: 2px solid    black;
+    border-collapse: collapse;
+    color: blue;
+    background-color: silver;
+}
+

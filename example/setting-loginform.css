@@ -1,0 +1,15 @@
+legend {
+    text-align: center;
+}
+
+form {
+    box-sizing: border-box;
+    margin-left: 35%;
+    margin-right: 35%;
+}
+
+label {
+    width: 120px;
+    display: inline-block;
+    text-align: left;
+}
