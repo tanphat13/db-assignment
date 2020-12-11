@@ -124,7 +124,19 @@ INSERT INTO `degree` (`employee_id`, `degree_name`, `degree_speciality`, `degree
 (202003, 'Associate Degree in Nursing', 'Geriatric Nursing', '2013'),
 (202004, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2010'),
 (202005, 'Bachelor of Science in Nursing', 'Perioperative Nurse', '2015'),
-(202006, 'Master of Science in Nursing', 'Critical Care Nurse', '2019');
+(202006, 'Master of Science in Nursing', 'Critical Care Nurse', '2019'),
+(301000, 'Doctor of Surgery ', 'Orthopedic surgeons', '2009'),
+(301001, 'Master of Medical Science ', 'Pediatricians', '2011'),
+(301002, 'Doctor of Clinical Medicine ', 'Infectious disease', '2007'),
+(302001, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2012'),
+(302002, 'Doctoral Degrees in Nursing', 'Cardiac Nurse', '2010'),
+(302002, 'Master of Science in Nursing', 'Geriatric Nursing', '2008'),
+(401000, 'Doctor of Surgery ', 'Orthopedic surgeons', '2003'),
+(401001, 'Doctor of Clinical Surgery ', 'Pulmonologists', '2010'),
+(401002, 'Master of Medical Science ', 'Cardiac surgeons', '2006'),
+(402001, 'Associate Degree in Nursing', 'Orthopedic Nurse', '2010'),
+(402002, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2008'),
+(402003, 'Bachelor of Science in Nursing', 'Critical Care Nurse', '2010');
 
 -- --------------------------------------------------------
 
@@ -144,8 +156,10 @@ CREATE TABLE `department` (
 --
 
 INSERT INTO `department` (`department_id`, `title`, `dean_id`) VALUES
-(1, 'Department A', NULL),
-(2, 'Department B', NULL);
+(1, 'Department A', 101000),
+(2, 'Department B', 201001),
+(3, 'Department C', 301000),
+(4, 'Department D', 401000);
 
 -- --------------------------------------------------------
 
@@ -216,7 +230,19 @@ INSERT INTO `employee` (`employee_id`, `Address`, `Fname`, `Lname`, `Date_of_bir
 (202003, '126/4 Clinton Street', 'Phuong', 'Cara', '1992-11-20', 'Female', 'Nurse', 2, '2013-09-08'),
 (202004, '76 Maximax Street', 'Thanh', 'Phuong', '1989-03-13', 'Female', 'Nurse', 2, '2017-06-21'),
 (202005, '3241 Wordinton Street', 'Karen', 'Nguyen', '1993-05-21', 'Female', 'Nurse', 2, '2016-01-06'),
-(202006, '56 Halminton Street', 'Rosie', 'Tran', '1994-05-21', 'Female', 'Nurse', 2, '2020-08-22');
+(202006, '56 Halminton Street', 'Rosie', 'Tran', '1994-05-21', 'Female', 'Nurse', 2, '2020-08-22'),
+(301000, '234 Wallsmith Street', 'Florentino', 'Mark', '1980-10-22', 'Male', 'Doctor', 3, '2015-10-25'),
+(301001, '292 Laudrey Street', 'Will', 'Smith', '1975-05-21', 'Male', 'Doctor', 3, '2013-03-27'),
+(301002, '18 Millington Street', 'Sarah', 'Nhu', '1980-06-21', 'Female', 'Doctor', 3, '2010-07-28'),
+(302001, '24 Smith Street', 'Linda', 'Cloeh', '1984-06-09', 'Female', 'Nurse', 3, '2014-12-04'),
+(302002, '46 Thirteen Street', 'Samantha', 'Lucy', '1987-06-25', 'Female', 'Nurse', 3, '2013-08-07'),
+(302003, '76 Dillinton Street', 'Alita', 'Nguyen', '1984-10-11', 'Female', 'Nurse', 3, '2010-05-18'),
+(401000, '26 Clinton Street', 'Charlie', 'Ngo', '1977-09-14', 'Male', 'Doctor', 4, '2009-07-14'),
+(401001, '28 Jamaica Street', 'Thauvin ', 'Ngo', '1982-07-14', 'Male', 'Doctor', 4, '2011-04-06'),
+(401002, '01 Lenglet Street', 'Mina', 'Tran', '1981-01-26', 'Female', 'Doctor', 4, '2008-03-16'),
+(402001, '34 Richard Street', 'Rosy', 'Trang', '1986-03-08', 'Female', 'Nurse', 4, '2012-07-08'),
+(402002, '88 Brinton Street ', 'Melisa', 'Alizabeth', '1983-09-24', 'Female', 'Nurse', 4, '2009-07-13'),
+(402003, '92 Arsenal Street', 'Jenny', 'Huyen', '1985-04-19', 'Female', 'Nurse', 4, '2015-02-22');
 
 -- --------------------------------------------------------
 
@@ -255,9 +281,12 @@ INSERT INTO `examination` (`examination_id`, `examination_date`, `second_exam_da
 (15, '2008-10-06', '2008-11-06', 'Acute bronchitis', 320),
 (16, '2016-04-08', '2016-04-28', 'Urinary tract infection', 225),
 (17, '2012-04-06', '2012-04-26', 'Osteoarthritis', 260),
-(18, '2020-12-08', '2020-12-24', 'Hangover', 200),
-(19, '2020-12-08', '2020-12-24', 'Hangover', 200);
-
+(18, '2009-08-05', '2009-08-09', 'Diabetes', 115),
+(19, '2010-01-04', '2010-01-11', 'Malaise and fatigue', 75),
+(20, '2005-01-01', '2005-01-08', 'Diabetes, Hyperlipidemia', 175),
+(21, '2015-03-16', '2015-03-30', 'Asthma, Respiratory problems', 230),
+(22, '2015-04-15', '2015-04-22', 'Allergic rhinitis', 45),
+(23, '2016-04-08', '2016-04-18', 'Hypertension', 60);
 -- --------------------------------------------------------
 
 --
@@ -275,28 +304,40 @@ CREATE TABLE `examination_medication` (
 --
 
 INSERT INTO `examination_medication` (`medication_id`, `examination_id`) VALUES
-(13, 1),
-(5, 2),
 (1, 3),
-(11, 4),
-(33, 4),
-(8, 5),
-(14, 6),
-(18, 7),
-(15, 8),
-(34, 8),
-(22, 9),
-(3, 10),
 (2, 11),
-(35, 11),
+(3, 10),
+(5, 2),
 (6, 12),
-(21, 13),
+(8, 5),
+(9, 17),
+(11, 4),
+(13, 1),
+(14, 6),
+(15, 8),
 (16, 14),
-(36, 14),
-(20, 15),
-(37, 15),
+(18, 7),
 (19, 16),
-(9, 17);
+(20, 15),
+(21, 13),
+(22, 9),
+(33, 4),
+(34, 8),
+(35, 11),
+(36, 14),
+(37, 15),
+(38, 18),
+(39, 18),
+(40, 19),
+(41, 20),
+(42, 20),
+(43, 20),
+(44, 21),
+(45, 21),
+(46, 21),
+(47, 22),
+(48, 23),
+(49, 23);
 
 -- --------------------------------------------------------
 
@@ -317,16 +358,28 @@ CREATE TABLE `exams` (
 
 INSERT INTO `exams` (`outpatient_id`, `examination_id`, `doctor_id`) VALUES
 ('OP00010', 1, 101003),
-('OP00002', 4, 101005),
+('OP00011', 2, 101002),
+('OP00011', 3, 101001),
+('OP00002', 4, 301001),
 ('OP00007', 5, 201001),
-('OP00008', 7, 101004),
+('OP00012', 6, 201002),
+('OP00008', 7, 301002),
 ('OP00003', 8, 201002),
-('OP00004', 10, 201002),
+('OP00014', 9, 201003),
+('OP00004', 10, 201003),
 ('OP00001', 11, 101000),
-('OP00005', 15, 201004),
-('OP00002', 16, 101005),
-('OP00009', 17, 201002),
-('OP00012', 19, 101004);
+('OP00015', 12, 401001),
+('OP00016', 13, 101002),
+('OP00017', 14, 201004),
+('OP00005', 15, 401002),
+('OP00006', 16, 101005),
+('OP00009', 17, 401002),
+('OP00004', 18, 201003),
+('OP00010', 19, 101002),
+('OP00001', 20, 101000),
+('OP00018', 21, 301000),
+('OP00019', 22, 401000),
+('OP00020', 23, 301001);
 
 -- --------------------------------------------------------
 
@@ -435,7 +488,19 @@ INSERT INTO `medication` (`medication_id`, `name`, `expiration_date`, `effect`, 
 (34, 'Respiratory problems medicine', '2021-01-22', 'Reduce Respiratory problems diagnoses\r\n', 330, 'no'),
 (35, 'Diabetes Medicine', '2021-12-30', 'Reduce Diabetes diagnoses', 230, 'no'),
 (36, 'antibiotics medicine', '2022-06-15', 'Provide antibiotic', 300, 'no'),
-(37, 'antibiotics medicine', '2021-10-31', 'Provide antibiotic', 300, 'no');
+(37, 'antibiotics medicine', '2021-10-31', 'Provide antibiotic', 300, 'no'),
+(38, 'Diabetes Medicine', '2022-01-30', 'Reduce Diabetes diagnoses', 275, 'no'),
+(39, 'antibiotics medicine', '2021-01-31', 'Provide antibiotic', 250, 'no'),
+(40, 'antibiotics medicine', '2021-01-31', 'Provide antibiotic', 350, 'no'),
+(41, 'Diabetes Medicine', '2021-12-30', 'Reduce Diabetes diagnoses', 230, 'no'),
+(42, 'Hyperlipidemia Medicine', '2021-06-10', 'Reduce Hyperlipidemia', 195, 'no'),
+(43, 'antibiotics medicine', '2022-06-15', 'Provide antibiotic', 300, 'no'),
+(44, 'Asthma medicine', '2022-05-31', 'Reduce Asthma diagnose ', 95, 'no'),
+(45, 'Respiratory problems medicine', '2021-10-31', 'Reduce Respiratory problems diagnoses\r\n', 380, 'no'),
+(46, 'antibiotics medicine', '2021-01-31', 'Provide antibiotic', 250, 'no'),
+(47, 'Allergic rhinitis medicine', '2023-04-21', 'Reduce Allergic rhinitis diagnoses', 175, 'no'),
+(48, 'Hyperlipidemia Medicine', '2021-06-10', 'Reduce Hyperlipidemia', 195, 'no'),
+(49, 'antibiotics medicine', '2021-10-31', 'Provide antibiotic', 300, 'no');
 
 -- --------------------------------------------------------
 
@@ -494,7 +559,15 @@ INSERT INTO `out_patient` (`patient_id`) VALUES
 ('OP00009'),
 ('OP00010'),
 ('OP00011'),
-('OP00012');
+('OP00012'),
+('OP00013'),
+('OP00014'),
+('OP00015'),
+('OP00016'),
+('OP00017'),
+('OP00018'),
+('OP00019'),
+('OP00020');
 
 -- --------------------------------------------------------
 
@@ -544,8 +617,16 @@ INSERT INTO `patient` (`patient_id`, `fname`, `lname`, `date_of_birth`, `phone_n
 ('OP00008', 'Long', 'Nguyen', '1999-08-10', '0265487913', 'Male', '13 Angeles Street'),
 ('OP00009', 'Rose', 'Halminton', '1966-02-09', '0668754129', 'Female', '329 Clinton Street'),
 ('OP00010', 'Viera', 'Patric', '1994-06-23', '0788945612', 'Male', '123 Parellet Street'),
-('OP00011', 'Phat', 'Cu', '1999-12-13', '0934023414', 'Male', '199/25 De Tham St, Pham Ngu Lao Ward'),
-('OP00012', 'Phat', 'Cu', '1999-12-13', '0934023414', 'Male', '199/25 De Tham St, Pham Ngu Lao Ward');
+('OP00011', 'Lumber', 'Jack', '1989-05-28', '0661548129', 'Male', '911 Southamton Street'),
+('OP00012', 'Mary', 'Jane', '1997-08-27', '0686598426', 'Female', '76 Hillstone Street'),
+('OP00013', 'Cloe', 'Garcia', '1990-07-16', '0657958423', 'Female', '286 Mary Street'),
+('OP00014', 'Halmon', 'Nguyen', '1989-06-24', '0325465879', 'Male', '322 Everton Street'),
+('OP00015', 'Linda', 'Tong', '1991-11-13', '0654212323', 'Female', '13 Millstone Street'),
+('OP00016', 'Billy', 'Martin', '1992-10-04', '0954323658', 'Male', '78 Lunger Street '),
+('OP00017', 'Folden', 'Phil', '1995-06-24', '', 'Male', '256 Alizabeth Street'),
+('OP00018', 'Thanh', 'Tran', '1986-02-15', '0254545967', 'Female', '16 International Street'),
+('OP00019', 'Viet', 'Dang', '1994-08-25', '0169857889', 'Male', '66 Leed Street'),
+('OP00020', 'Hanh', 'Nguyen', '1993-06-29', '0352686959', 'Female', '18 LeverHill Street');
 
 --
 -- Triggers `patient`
@@ -595,32 +676,44 @@ CREATE TABLE `phone_number` (
 
 INSERT INTO `phone_number` (`employee_id`, `Phone_number`) VALUES
 (101000, '0125466548'),
-(201002, '0128261627'),
-(102008, '0172638462'),
-(101005, '0183477563'),
 (101001, '0239446371'),
-(201001, '0281628361'),
+(101002, '0293847637'),
+(101003, '0957462847'),
+(101004, '0364582475'),
+(101005, '0183477563'),
+(102000, '0937481155'),
+(102001, '0356678354'),
+(102002, '0382736472'),
+(102003, '0498876251'),
 (102004, '0284627361'),
 (102005, '0292735166'),
-(101002, '0293847637'),
 (102006, '0298461628'),
-(102001, '0356678354'),
-(101004, '0364582475'),
-(202002, '0382637484'),
-(102002, '0382736472'),
-(202000, '0397263534'),
+(102007, '0927451728'),
+(102008, '0172638462'),
 (201000, '0398273938'),
+(201001, '0281628361'),
+(201002, '0128261627'),
+(201003, '0594736527'),
 (201004, '0398372632'),
-(202005, '0492736382'),
+(202000, '0397263534'),
+(202001, '0937263747'),
+(202002, '0382637484'),
 (202003, '0492928283'),
 (202004, '0497263633'),
-(102003, '0498876251'),
-(201003, '0594736527'),
-(102007, '0927451728'),
-(202001, '0937263747'),
-(102000, '0937481155'),
+(202005, '0492736382'),
 (202006, '0938274425'),
-(101003, '0957462847');
+(301000, '0552546987'),
+(301001, '0154875487'),
+(301002, '0166958987'),
+(302001, '0336545821'),
+(302002, '0455626915'),
+(302003, '0122365699'),
+(401000, '0596566211'),
+(401001, '0558453321'),
+(401002, '0598544125'),
+(402001, '0955487223'),
+(402002, '0655412159'),
+(402003, '0427126487');
 
 -- --------------------------------------------------------
 
@@ -669,22 +762,22 @@ CREATE TABLE `treatment_medication` (
 --
 
 INSERT INTO `treatment_medication` (`medication_id`, `treatment_id`) VALUES
-(12, 1),
 (4, 2),
-(30, 2),
-(31, 2),
+(7, 10),
+(10, 8),
+(12, 1),
 (17, 3),
-(32, 3),
-(23, 4),
 (22, 5),
+(23, 4),
 (24, 5),
 (25, 6),
 (26, 7),
 (27, 7),
-(10, 8),
 (28, 9),
 (29, 9),
-(7, 10);
+(30, 2),
+(31, 2),
+(32, 3);
 
 -- --------------------------------------------------------
 
@@ -705,12 +798,12 @@ CREATE TABLE `treats` (
 
 INSERT INTO `treats` (`inpatient_id`, `treatment_id`, `doctor_id`) VALUES
 ('IP00001', 1, 101002),
-('IP00002', 2, 101003),
-('IP00003', 3, 201002),
+('IP00002', 2, 401002),
+('IP00003', 3, 401001),
 ('IP00004', 4, 201004),
 ('IP00005', 5, 101005),
-('IP00006', 6, 101003),
-('IP00007', 7, 201000),
+('IP00006', 6, 301002),
+('IP00007', 7, 302003),
 ('IP00008', 8, 101002),
 ('IP00009', 9, 201003),
 ('IP00010', 10, 201003);
