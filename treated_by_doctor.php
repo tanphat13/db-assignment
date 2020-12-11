@@ -79,6 +79,8 @@
 
 <script>
     function showLiveResult(str) {
+    let username = "<?php echo $_SESSION["username"] ?>";
+    let password = "<?php echo $_SESSION["username"] ?>";
     if (str.length==0) {
         document.getElementById("livesearch").innerHTML="";
         document.getElementById("livesearch").style.border="0px";
@@ -91,7 +93,7 @@
         document.getElementById("livesearch").style.border="1px solid #A5ACB2";
         }
     }
-    xmlhttp.open("GET","doctor_livesearch.php?search="+str,true);
+    xmlhttp.open("GET","doctor_livesearch.php?username="+username+"&password="+password+"&search="+str,true);
     xmlhttp.send();
     }
 </script>

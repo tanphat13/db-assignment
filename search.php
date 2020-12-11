@@ -25,6 +25,8 @@ else {
 <script>
 
 function showLiveResult(str) {
+  let username = "<?php echo $_SESSION["username"] ?>";
+  let password = "<?php echo $_SESSION["username"] ?>";
   if (str.length==0) {
     document.getElementById("livesearch").innerHTML="";
     document.getElementById("livesearch").style.border="0px";
@@ -33,11 +35,12 @@ function showLiveResult(str) {
   var xmlhttp=new XMLHttpRequest();
   xmlhttp.onreadystatechange=function() {
     if (this.readyState==4 && this.status==200) {
+      
       document.getElementById("livesearch").innerHTML=this.responseText;
       document.getElementById("livesearch").style.border="1px solid #A5ACB2";
     }
   }
-  xmlhttp.open("GET","allsearch.php?search="+str,true);
+  xmlhttp.open("GET","allsearch.php?username="+username+"&password="+password+"&search="+str,true);
   xmlhttp.send();
 }
 
