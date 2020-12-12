@@ -670,6 +670,7 @@ INSERT INTO `out_patient` (`patient_id`) VALUES
 ('OP00015'),
 ('OP00016'),
 ('OP00017'),
+('OP00018'),
 ('OP00019'),
 ('OP00020');
 

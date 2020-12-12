@@ -22,18 +22,16 @@
                 $input_password = $_POST['password'];
                 if ($input_username == $row['1'] && $input_password == $row['2']) {
                     // session_start();
-                    echo var_dump($row);
                     $_SESSION["username"] = $row['3'];
                     $_SESSION["password"] = $row['4'];                 
                     $flag = 1;
-                    echo var_dump($_SESSION);
                     break;
                     
                 }
             }
         }
         if ($flag == 1) {
-            header('Location:index.php?page=search');
+            header('Location: http://localhost/asm2db/index.php?page=search', false);
         }
         else {
             echo 'Wrong username or password';
