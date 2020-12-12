@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Dec 11, 2020 at 07:41 PM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.4.10
+-- Host: localhost
+-- Generation Time: Dec 12, 2020 at 03:35 PM
+-- Server version: 8.0.19
+-- PHP Version: 7.3.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -28,6 +29,23 @@ DELIMITER $$
 --
 -- Procedures
 --
+DROP PROCEDURE IF EXISTS `check_expired_medication`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_expired_medication` ()  BEGIN
+    DECLARE id INT DEFAULT 0;
+    DECLARE finished INT DEFAULT 0;
+    DECLARE expired_medication CURSOR FOR SELECT medication_id FROM medication WHERE expiration_date <= CURRENT_DATE() AND out_of_date='no';
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+    OPEN expired_medication;
+    check_loop: LOOP
+    	FETCH expired_medication INTO id;
+        IF finished = 1 THEN
+        	LEAVE check_loop;
+        END IF;
+        UPDATE medication SET out_of_date='yes' WHERE medication_id = id;
+    END LOOP;
+    CLOSE expired_medication;
+END$$
+
 DROP PROCEDURE IF EXISTS `sorted_doctor_list`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sorted_doctor_list` (IN `start_date` DATE, IN `end_date` DATE)  BEGIN
 	SELECT CONCAT(D.Fname, ' ', D.Lname) as fullname, num_of_patients FROM doctor D JOIN (SELECT doctor_id, COUNT(patient_id) as num_of_patients FROM (SELECT treats.inpatient_id as patient_id, treats.doctor_id FROM treatment JOIN treats ON treatment.treatment_id = treats.treatment_id WHERE treatment.start_date > start_date AND treatment.end_date < end_date UNION SELECT exams.outpatient_id as patient_id, exams.doctor_id FROM exams JOIN examination ON exams.examination_id = examination.examination_id WHERE examination.examination_date BETWEEN start_date AND end_date ) AS u GROUP BY doctor_id ORDER BY num_of_patients) U ON D.employee_id = U.doctor_id;
@@ -68,12 +86,11 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `degree`;
-CREATE TABLE IF NOT EXISTS `degree` (
-  `employee_id` int(6) NOT NULL,
+CREATE TABLE `degree` (
+  `employee_id` int NOT NULL,
   `degree_name` text NOT NULL,
   `degree_speciality` text NOT NULL,
-  `degree_year` year(4) NOT NULL,
-  PRIMARY KEY (`employee_id`,`degree_name`(20),`degree_speciality`(30),`degree_year`)
+  `degree_year` year NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -81,45 +98,45 @@ CREATE TABLE IF NOT EXISTS `degree` (
 --
 
 INSERT INTO `degree` (`employee_id`, `degree_name`, `degree_speciality`, `degree_year`) VALUES
-(101000, 'Doctor of Clinical Medicine ', 'Infectious disease', '1999'),
-(101001, 'Master of Medical Science ', 'Pediatricians', '1996'),
-(101002, 'Master of Clinical Medicine ', 'General surgeons', '2002'),
-(101003, 'Doctor of Surgery ', 'Orthopedic surgeons', '1995'),
-(101004, 'Doctor of Clinical Surgery ', 'Pulmonologists', '2010'),
-(101005, 'Master of Medical Science ', 'Cardiac surgeons', '1994'),
-(102000, 'Doctoral Degrees in Nursing', 'Cardiac Nurse', '2000'),
-(102001, 'Bachelor of Science in Nursing', 'Critical Care Nurse', '2006'),
-(102002, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2015'),
-(102003, 'Associate Degree in Nursing', 'Orthopedic Nurse', '2013'),
-(102004, 'Master of Science in Nursing', 'Cardiac Nurse', '2007'),
-(102005, 'Associate Degree in Nursing ', 'Mental Health Nurse', '2007'),
-(102006, 'Master of Science in Nursing', 'Perioperative Nurse', '2009'),
-(102007, 'Bachelor of Science in Nursing', 'Critical Care Nurse', '2005'),
-(102008, 'Master of Science in Nursing', 'Geriatric Nursing', '2003'),
-(201000, 'Doctor of Clinical Medicine ', 'Infectious disease', '2003'),
-(201001, 'Master of Medical Science ', 'Pediatricians', '2010'),
-(201002, 'Master of Medical Science ', 'Cardiac surgeons', '2015'),
-(201003, 'Doctor of Surgery ', 'Orthopedic surgeons', '2009'),
-(201004, 'Doctor of Surgery ', 'Orthopedic surgeons', '2016'),
-(202000, 'Associate Degree in Nursing', 'Geriatric Nursing', '2005'),
-(202001, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2006'),
-(202002, 'Master of Science in Nursing', 'Cardiac Nurse', '2014'),
-(202003, 'Associate Degree in Nursing', 'Geriatric Nursing', '2013'),
-(202004, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2010'),
-(202005, 'Bachelor of Science in Nursing', 'Perioperative Nurse', '2015'),
-(202006, 'Master of Science in Nursing', 'Critical Care Nurse', '2019'),
-(301000, 'Doctor of Surgery ', 'Orthopedic surgeons', '2009'),
-(301001, 'Master of Medical Science ', 'Pediatricians', '2011'),
-(301002, 'Doctor of Clinical Medicine ', 'Infectious disease', '2007'),
-(302001, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2012'),
-(302002, 'Doctoral Degrees in Nursing', 'Cardiac Nurse', '2010'),
-(302002, 'Master of Science in Nursing', 'Geriatric Nursing', '2008'),
-(401000, 'Doctor of Surgery ', 'Orthopedic surgeons', '2003'),
-(401001, 'Doctor of Clinical Surgery ', 'Pulmonologists', '2010'),
-(401002, 'Master of Medical Science ', 'Cardiac surgeons', '2006'),
-(402001, 'Associate Degree in Nursing', 'Orthopedic Nurse', '2010'),
-(402002, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', '2008'),
-(402003, 'Bachelor of Science in Nursing', 'Critical Care Nurse', '2010');
+(101000, 'Doctor of Clinical Medicine ', 'Infectious disease', 1999),
+(101001, 'Master of Medical Science ', 'Pediatricians', 1996),
+(101002, 'Master of Clinical Medicine ', 'General surgeons', 2002),
+(101003, 'Doctor of Surgery ', 'Orthopedic surgeons', 1995),
+(101004, 'Doctor of Clinical Surgery ', 'Pulmonologists', 2010),
+(101005, 'Master of Medical Science ', 'Cardiac surgeons', 1994),
+(102000, 'Doctoral Degrees in Nursing', 'Cardiac Nurse', 2000),
+(102001, 'Bachelor of Science in Nursing', 'Critical Care Nurse', 2006),
+(102002, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', 2015),
+(102003, 'Associate Degree in Nursing', 'Orthopedic Nurse', 2013),
+(102004, 'Master of Science in Nursing', 'Cardiac Nurse', 2007),
+(102005, 'Associate Degree in Nursing ', 'Mental Health Nurse', 2007),
+(102006, 'Master of Science in Nursing', 'Perioperative Nurse', 2009),
+(102007, 'Bachelor of Science in Nursing', 'Critical Care Nurse', 2005),
+(102008, 'Master of Science in Nursing', 'Geriatric Nursing', 2003),
+(201000, 'Doctor of Clinical Medicine ', 'Infectious disease', 2003),
+(201001, 'Master of Medical Science ', 'Pediatricians', 2010),
+(201002, 'Master of Medical Science ', 'Cardiac surgeons', 2015),
+(201003, 'Doctor of Surgery ', 'Orthopedic surgeons', 2009),
+(201004, 'Doctor of Surgery ', 'Orthopedic surgeons', 2016),
+(202000, 'Associate Degree in Nursing', 'Geriatric Nursing', 2005),
+(202001, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', 2006),
+(202002, 'Master of Science in Nursing', 'Cardiac Nurse', 2014),
+(202003, 'Associate Degree in Nursing', 'Geriatric Nursing', 2013),
+(202004, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', 2010),
+(202005, 'Bachelor of Science in Nursing', 'Perioperative Nurse', 2015),
+(202006, 'Master of Science in Nursing', 'Critical Care Nurse', 2019),
+(301000, 'Doctor of Surgery ', 'Orthopedic surgeons', 2009),
+(301001, 'Master of Medical Science ', 'Pediatricians', 2011),
+(301002, 'Doctor of Clinical Medicine ', 'Infectious disease', 2007),
+(302001, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', 2012),
+(302002, 'Doctoral Degrees in Nursing', 'Cardiac Nurse', 2010),
+(302002, 'Master of Science in Nursing', 'Geriatric Nursing', 2008),
+(401000, 'Doctor of Surgery ', 'Orthopedic surgeons', 2003),
+(401001, 'Doctor of Clinical Surgery ', 'Pulmonologists', 2010),
+(401002, 'Master of Medical Science ', 'Cardiac surgeons', 2006),
+(402001, 'Associate Degree in Nursing', 'Orthopedic Nurse', 2010),
+(402002, 'Doctoral Degrees in Nursing', 'Mental Health Nurse', 2008),
+(402003, 'Bachelor of Science in Nursing', 'Critical Care Nurse', 2010);
 
 -- --------------------------------------------------------
 
@@ -128,13 +145,11 @@ INSERT INTO `degree` (`employee_id`, `degree_name`, `degree_speciality`, `degree
 --
 
 DROP TABLE IF EXISTS `department`;
-CREATE TABLE IF NOT EXISTS `department` (
-  `department_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `department` (
+  `department_id` int NOT NULL,
   `title` text NOT NULL,
-  `dean_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`department_id`),
-  KEY `dean_id` (`dean_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  `dean_id` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `department`
@@ -173,15 +188,15 @@ DELIMITER ;
 -- (See below for the actual view)
 --
 DROP VIEW IF EXISTS `doctor`;
-CREATE TABLE IF NOT EXISTS `doctor` (
-`employee_id` int(11)
-,`Address` text
-,`Fname` text
-,`Lname` text
+CREATE TABLE `doctor` (
+`Address` text
 ,`Date_of_birth` date
+,`Department_code` int
+,`employee_id` int
+,`Fname` text
 ,`Gender` set('Male','Female','Others')
 ,`Job_Type` set('Doctor','Nurse')
-,`Department_code` int(11)
+,`Lname` text
 ,`Start_date` date
 );
 
@@ -192,19 +207,17 @@ CREATE TABLE IF NOT EXISTS `doctor` (
 --
 
 DROP TABLE IF EXISTS `employee`;
-CREATE TABLE IF NOT EXISTS `employee` (
-  `employee_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `employee` (
+  `employee_id` int NOT NULL,
   `Address` text NOT NULL,
   `Fname` text NOT NULL,
   `Lname` text NOT NULL,
   `Date_of_birth` date NOT NULL,
   `Gender` set('Male','Female','Others') NOT NULL,
   `Job_Type` set('Doctor','Nurse') NOT NULL,
-  `Department_code` int(11) NOT NULL,
-  `Start_date` date NOT NULL,
-  PRIMARY KEY (`employee_id`),
-  KEY `Department_code` (`Department_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=202007 DEFAULT CHARSET=utf8;
+  `Department_code` int NOT NULL,
+  `Start_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `employee`
@@ -310,14 +323,13 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `examination`;
-CREATE TABLE IF NOT EXISTS `examination` (
-  `examination_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `examination` (
+  `examination_id` int NOT NULL,
   `examination_date` date NOT NULL,
   `second_exam_date` date NOT NULL,
   `diagnosis` text NOT NULL,
-  `fee` int(11) NOT NULL,
-  PRIMARY KEY (`examination_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+  `fee` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `examination`
@@ -375,11 +387,9 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `examination_medication`;
-CREATE TABLE IF NOT EXISTS `examination_medication` (
-  `medication_id` int(11) NOT NULL,
-  `examination_id` int(11) NOT NULL,
-  PRIMARY KEY (`medication_id`,`examination_id`),
-  KEY `examination_id` (`examination_id`)
+CREATE TABLE `examination_medication` (
+  `medication_id` int NOT NULL,
+  `examination_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -387,28 +397,28 @@ CREATE TABLE IF NOT EXISTS `examination_medication` (
 --
 
 INSERT INTO `examination_medication` (`medication_id`, `examination_id`) VALUES
-(1, 3),
-(2, 11),
-(3, 10),
-(5, 2),
-(6, 12),
-(8, 5),
-(9, 17),
-(11, 4),
 (13, 1),
-(14, 6),
-(15, 8),
-(16, 14),
-(18, 7),
-(19, 16),
-(20, 15),
-(21, 13),
-(22, 9),
+(5, 2),
+(1, 3),
+(11, 4),
 (33, 4),
+(8, 5),
+(14, 6),
+(18, 7),
+(15, 8),
 (34, 8),
+(22, 9),
+(3, 10),
+(2, 11),
 (35, 11),
+(6, 12),
+(21, 13),
+(16, 14),
 (36, 14),
+(20, 15),
 (37, 15),
+(19, 16),
+(9, 17),
 (38, 18),
 (39, 18),
 (40, 19),
@@ -429,14 +439,10 @@ INSERT INTO `examination_medication` (`medication_id`, `examination_id`) VALUES
 --
 
 DROP TABLE IF EXISTS `exams`;
-CREATE TABLE IF NOT EXISTS `exams` (
+CREATE TABLE `exams` (
   `outpatient_id` varchar(7) NOT NULL,
-  `examination_id` int(11) NOT NULL,
-  `doctor_id` int(11) NOT NULL,
-  PRIMARY KEY (`examination_id`),
-  KEY `examination_id` (`examination_id`),
-  KEY `doctor_id` (`doctor_id`),
-  KEY `exams_ibfk_1` (`outpatient_id`)
+  `examination_id` int NOT NULL,
+  `doctor_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -475,16 +481,14 @@ INSERT INTO `exams` (`outpatient_id`, `examination_id`, `doctor_id`) VALUES
 --
 
 DROP TABLE IF EXISTS `inpatient`;
-CREATE TABLE IF NOT EXISTS `inpatient` (
+CREATE TABLE `inpatient` (
   `patient_id` varchar(7) NOT NULL,
   `date_of_discharge` date DEFAULT NULL,
-  `diagnosis` text DEFAULT NULL,
-  `fee` int(11) DEFAULT NULL,
-  `date_of_admission` datetime NOT NULL DEFAULT current_timestamp(),
+  `diagnosis` text,
+  `fee` int DEFAULT NULL,
+  `date_of_admission` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `sickroom` varchar(5) DEFAULT NULL,
-  `nurse_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`patient_id`),
-  KEY `nurse_id` (`nurse_id`)
+  `nurse_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -501,11 +505,18 @@ INSERT INTO `inpatient` (`patient_id`, `date_of_discharge`, `diagnosis`, `fee`, 
 ('IP00007', '2016-07-26', 'Malaise and fatigue, Respiratory problems', 600, '2016-07-24 17:38:17', 'C308', 302003),
 ('IP00008', '2018-01-23', 'Allergic rhinitis, Respiratory problems', 955, '2018-01-19 23:40:09', 'B413', 202004),
 ('IP00009', '2011-09-26', 'Acute laryngopharyngitis, Malaise and fatigue', 680, '2011-09-24 23:59:10', 'A403', 102004),
-('IP00010', '2015-05-24', 'Reflux esophagitis', 400, '2015-05-22 19:20:26', 'B211', 202003);
+('IP00010', '2020-10-24', 'Reflux esophagitis', 484, '2020-10-22 19:20:26', 'B211', 202003);
 
 --
 -- Triggers `inpatient`
 --
+DROP TRIGGER IF EXISTS `increase_fee`;
+DELIMITER $$
+CREATE TRIGGER `increase_fee` BEFORE UPDATE ON `inpatient` FOR EACH ROW IF (DATE(NEW.date_of_admission) >= '2020-09-01') THEN
+SET NEW.fee = NEW.fee * 1.1;
+END IF
+$$
+DELIMITER ;
 DROP TRIGGER IF EXISTS `inpatient_date_order_insert`;
 DELIMITER $$
 CREATE TRIGGER `inpatient_date_order_insert` BEFORE INSERT ON `inpatient` FOR EACH ROW IF (NEW.date_of_admission > NEW.date_of_discharge) THEN
@@ -530,7 +541,7 @@ DELIMITER ;
 -- (See below for the actual view)
 --
 DROP VIEW IF EXISTS `inpatient_of_doctor`;
-CREATE TABLE IF NOT EXISTS `inpatient_of_doctor` (
+CREATE TABLE `inpatient_of_doctor` (
 `inpatient_id` varchar(7)
 );
 
@@ -541,15 +552,14 @@ CREATE TABLE IF NOT EXISTS `inpatient_of_doctor` (
 --
 
 DROP TABLE IF EXISTS `medication`;
-CREATE TABLE IF NOT EXISTS `medication` (
-  `medication_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `medication` (
+  `medication_id` int NOT NULL,
   `name` text NOT NULL,
   `expiration_date` date NOT NULL,
   `effect` text NOT NULL,
-  `price` int(11) NOT NULL,
-  `out_of_date` set('yes','no') NOT NULL,
-  PRIMARY KEY (`medication_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+  `price` int NOT NULL,
+  `out_of_date` set('yes','no') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `medication`
@@ -613,15 +623,15 @@ INSERT INTO `medication` (`medication_id`, `name`, `expiration_date`, `effect`, 
 -- (See below for the actual view)
 --
 DROP VIEW IF EXISTS `nurse`;
-CREATE TABLE IF NOT EXISTS `nurse` (
-`employee_id` int(11)
-,`Address` text
-,`Fname` text
-,`Lname` text
+CREATE TABLE `nurse` (
+`Address` text
 ,`Date_of_birth` date
+,`Department_code` int
+,`employee_id` int
+,`Fname` text
 ,`Gender` set('Male','Female','Others')
 ,`Job_Type` set('Doctor','Nurse')
-,`Department_code` int(11)
+,`Lname` text
 ,`Start_date` date
 );
 
@@ -632,7 +642,7 @@ CREATE TABLE IF NOT EXISTS `nurse` (
 -- (See below for the actual view)
 --
 DROP VIEW IF EXISTS `outpatient_of_doctor`;
-CREATE TABLE IF NOT EXISTS `outpatient_of_doctor` (
+CREATE TABLE `outpatient_of_doctor` (
 `outpatient_id` varchar(7)
 );
 
@@ -643,9 +653,8 @@ CREATE TABLE IF NOT EXISTS `outpatient_of_doctor` (
 --
 
 DROP TABLE IF EXISTS `out_patient`;
-CREATE TABLE IF NOT EXISTS `out_patient` (
-  `patient_id` varchar(7) NOT NULL,
-  PRIMARY KEY (`patient_id`)
+CREATE TABLE `out_patient` (
+  `patient_id` varchar(7) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -681,15 +690,14 @@ INSERT INTO `out_patient` (`patient_id`) VALUES
 --
 
 DROP TABLE IF EXISTS `patient`;
-CREATE TABLE IF NOT EXISTS `patient` (
+CREATE TABLE `patient` (
   `patient_id` varchar(7) NOT NULL,
   `fname` text NOT NULL,
   `lname` text NOT NULL,
   `date_of_birth` date NOT NULL,
   `phone_number` varchar(11) NOT NULL,
   `gender` set('Male','Female','Other') NOT NULL,
-  `address` text NOT NULL,
-  PRIMARY KEY (`patient_id`)
+  `address` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -748,14 +756,14 @@ DELIMITER ;
 -- (See below for the actual view)
 --
 DROP VIEW IF EXISTS `patients_of_doctor`;
-CREATE TABLE IF NOT EXISTS `patients_of_doctor` (
-`patient_id` varchar(7)
-,`fname` mediumtext
-,`lname` mediumtext
+CREATE TABLE `patients_of_doctor` (
+`address` mediumtext
 ,`date_of_birth` date
-,`phone_number` varchar(11)
+,`fname` mediumtext
 ,`gender` varchar(17)
-,`address` mediumtext
+,`lname` mediumtext
+,`patient_id` varchar(7)
+,`phone_number` varchar(11)
 );
 
 -- --------------------------------------------------------
@@ -765,11 +773,9 @@ CREATE TABLE IF NOT EXISTS `patients_of_doctor` (
 --
 
 DROP TABLE IF EXISTS `phone_number`;
-CREATE TABLE IF NOT EXISTS `phone_number` (
-  `employee_id` int(11) NOT NULL,
-  `Phone_number` varchar(11) NOT NULL,
-  PRIMARY KEY (`employee_id`,`Phone_number`),
-  UNIQUE KEY `unique_phone` (`Phone_number`)
+CREATE TABLE `phone_number` (
+  `employee_id` int NOT NULL,
+  `Phone_number` varchar(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -777,45 +783,45 @@ CREATE TABLE IF NOT EXISTS `phone_number` (
 --
 
 INSERT INTO `phone_number` (`employee_id`, `Phone_number`) VALUES
+(302003, '0122365699'),
 (101000, '0125466548'),
-(101001, '0239446371'),
-(101002, '0293847637'),
-(101003, '0957462847'),
-(101004, '0364582475'),
-(101005, '0183477563'),
-(102000, '0937481155'),
-(102001, '0356678354'),
-(102002, '0382736472'),
-(102003, '0498876251'),
-(102004, '0284627361'),
-(102005, '0292735166'),
-(102006, '0298461628'),
-(102007, '0927451728'),
-(102008, '0172638462'),
-(201000, '0398273938'),
-(201001, '0281628361'),
 (201002, '0128261627'),
-(201003, '0594736527'),
-(201004, '0398372632'),
-(202000, '0397263534'),
-(202001, '0937263747'),
-(202002, '0382637484'),
-(202003, '0492928283'),
-(202004, '0497263633'),
-(202005, '0492736382'),
-(202006, '0938274425'),
-(301000, '0552546987'),
 (301001, '0154875487'),
 (301002, '0166958987'),
+(102008, '0172638462'),
+(101005, '0183477563'),
+(101001, '0239446371'),
+(201001, '0281628361'),
+(102004, '0284627361'),
+(102005, '0292735166'),
+(101002, '0293847637'),
+(102006, '0298461628'),
 (302001, '0336545821'),
+(102001, '0356678354'),
+(101004, '0364582475'),
+(202002, '0382637484'),
+(102002, '0382736472'),
+(202000, '0397263534'),
+(201000, '0398273938'),
+(201004, '0398372632'),
+(402003, '0427126487'),
 (302002, '0455626915'),
-(302003, '0122365699'),
-(401000, '0596566211'),
+(202005, '0492736382'),
+(202003, '0492928283'),
+(202004, '0497263633'),
+(102003, '0498876251'),
+(301000, '0552546987'),
 (401001, '0558453321'),
+(201003, '0594736527'),
+(401000, '0596566211'),
 (401002, '0598544125'),
-(402001, '0955487223'),
 (402002, '0655412159'),
-(402003, '0427126487');
+(102007, '0927451728'),
+(202001, '0937263747'),
+(102000, '0937481155'),
+(202006, '0938274425'),
+(402001, '0955487223'),
+(101003, '0957462847');
 
 -- --------------------------------------------------------
 
@@ -824,13 +830,12 @@ INSERT INTO `phone_number` (`employee_id`, `Phone_number`) VALUES
 --
 
 DROP TABLE IF EXISTS `treatment`;
-CREATE TABLE IF NOT EXISTS `treatment` (
-  `treatment_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `treatment` (
+  `treatment_id` int NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `result` text NOT NULL,
-  PRIMARY KEY (`treatment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+  `result` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `treatment`
@@ -847,7 +852,6 @@ INSERT INTO `treatment` (`treatment_id`, `start_date`, `end_date`, `result`) VAL
 (8, '2018-01-20', '2018-01-22', 'Need more rest, bad diagnose, need watching 24/7'),
 (9, '2011-09-25', '2011-09-26', 'No longer dangerous, diagnose is low, need more rest'),
 (10, '2015-05-23', '2015-05-24', 'Normal, need more rest');
-
 
 --
 -- Triggers `treatment`
@@ -876,11 +880,9 @@ DELIMITER ;
 --
 
 DROP TABLE IF EXISTS `treatment_medication`;
-CREATE TABLE IF NOT EXISTS `treatment_medication` (
-  `medication_id` int(11) NOT NULL,
-  `treatment_id` int(11) NOT NULL,
-  PRIMARY KEY (`medication_id`,`treatment_id`),
-  KEY `treatment_id` (`treatment_id`)
+CREATE TABLE `treatment_medication` (
+  `medication_id` int NOT NULL,
+  `treatment_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -888,22 +890,22 @@ CREATE TABLE IF NOT EXISTS `treatment_medication` (
 --
 
 INSERT INTO `treatment_medication` (`medication_id`, `treatment_id`) VALUES
-(4, 2),
-(7, 10),
-(10, 8),
 (12, 1),
+(4, 2),
+(30, 2),
+(31, 2),
 (17, 3),
-(22, 5),
+(32, 3),
 (23, 4),
+(22, 5),
 (24, 5),
 (25, 6),
 (26, 7),
 (27, 7),
+(10, 8),
 (28, 9),
 (29, 9),
-(30, 2),
-(31, 2),
-(32, 3);
+(7, 10);
 
 -- --------------------------------------------------------
 
@@ -912,14 +914,10 @@ INSERT INTO `treatment_medication` (`medication_id`, `treatment_id`) VALUES
 --
 
 DROP TABLE IF EXISTS `treats`;
-CREATE TABLE IF NOT EXISTS `treats` (
+CREATE TABLE `treats` (
   `inpatient_id` varchar(7) NOT NULL,
-  `treatment_id` int(11) NOT NULL,
-  `doctor_id` int(11) NOT NULL,
-  PRIMARY KEY (`treatment_id`),
-  KEY `treatment_id` (`treatment_id`),
-  KEY `doctor_id` (`doctor_id`),
-  KEY `treats_ibfk_1` (`inpatient_id`)
+  `treatment_id` int NOT NULL,
+  `doctor_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -946,7 +944,7 @@ INSERT INTO `treats` (`inpatient_id`, `treatment_id`, `doctor_id`) VALUES
 DROP TABLE IF EXISTS `doctor`;
 
 DROP VIEW IF EXISTS `doctor`;
-CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `doctor`  AS  select `employee`.`employee_id` AS `employee_id`,`employee`.`Address` AS `Address`,`employee`.`Fname` AS `Fname`,`employee`.`Lname` AS `Lname`,`employee`.`Date_of_birth` AS `Date_of_birth`,`employee`.`Gender` AS `Gender`,`employee`.`Job_Type` AS `Job_Type`,`employee`.`Department_code` AS `Department_code`,`employee`.`Start_date` AS `Start_date` from `employee` where `employee`.`Job_Type` = 'Doctor' ;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `doctor`  AS  select `employee`.`employee_id` AS `employee_id`,`employee`.`Address` AS `Address`,`employee`.`Fname` AS `Fname`,`employee`.`Lname` AS `Lname`,`employee`.`Date_of_birth` AS `Date_of_birth`,`employee`.`Gender` AS `Gender`,`employee`.`Job_Type` AS `Job_Type`,`employee`.`Department_code` AS `Department_code`,`employee`.`Start_date` AS `Start_date` from `employee` where (`employee`.`Job_Type` = 'Doctor') ;
 
 -- --------------------------------------------------------
 
@@ -956,7 +954,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `doctor`  AS  se
 DROP TABLE IF EXISTS `inpatient_of_doctor`;
 
 DROP VIEW IF EXISTS `inpatient_of_doctor`;
-CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `inpatient_of_doctor`  AS  select `t`.`inpatient_id` AS `inpatient_id` from (`treats` `t` join `doctor` `d` on(`t`.`doctor_id` = `d`.`employee_id`)) where concat(`d`.`Fname`,' ',`d`.`Lname`) = 'Nguyen Van A' ;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inpatient_of_doctor`  AS  select `t`.`inpatient_id` AS `inpatient_id` from (`treats` `t` join `doctor` `d` on((`t`.`doctor_id` = `d`.`employee_id`))) where (concat(`d`.`Fname`,' ',`d`.`Lname`) = 'Nguyen Van A') ;
 
 -- --------------------------------------------------------
 
@@ -966,7 +964,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `inpatient_of_do
 DROP TABLE IF EXISTS `nurse`;
 
 DROP VIEW IF EXISTS `nurse`;
-CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `nurse`  AS  select `employee`.`employee_id` AS `employee_id`,`employee`.`Address` AS `Address`,`employee`.`Fname` AS `Fname`,`employee`.`Lname` AS `Lname`,`employee`.`Date_of_birth` AS `Date_of_birth`,`employee`.`Gender` AS `Gender`,`employee`.`Job_Type` AS `Job_Type`,`employee`.`Department_code` AS `Department_code`,`employee`.`Start_date` AS `Start_date` from `employee` where `employee`.`Job_Type` = 'Nurse' ;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `nurse`  AS  select `employee`.`employee_id` AS `employee_id`,`employee`.`Address` AS `Address`,`employee`.`Fname` AS `Fname`,`employee`.`Lname` AS `Lname`,`employee`.`Date_of_birth` AS `Date_of_birth`,`employee`.`Gender` AS `Gender`,`employee`.`Job_Type` AS `Job_Type`,`employee`.`Department_code` AS `Department_code`,`employee`.`Start_date` AS `Start_date` from `employee` where (`employee`.`Job_Type` = 'Nurse') ;
 
 -- --------------------------------------------------------
 
@@ -976,7 +974,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `nurse`  AS  sel
 DROP TABLE IF EXISTS `outpatient_of_doctor`;
 
 DROP VIEW IF EXISTS `outpatient_of_doctor`;
-CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `outpatient_of_doctor`  AS  select `e`.`outpatient_id` AS `outpatient_id` from (`exams` `e` join `doctor` `d` on(`e`.`doctor_id` = `d`.`employee_id`)) where concat(`d`.`Fname`,' ',`d`.`Lname`) = 'Nguyen Van A' ;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `outpatient_of_doctor`  AS  select `e`.`outpatient_id` AS `outpatient_id` from (`exams` `e` join `doctor` `d` on((`e`.`doctor_id` = `d`.`employee_id`))) where (concat(`d`.`Fname`,' ',`d`.`Lname`) = 'Nguyen Van A') ;
 
 -- --------------------------------------------------------
 
@@ -986,7 +984,141 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `outpatient_of_d
 DROP TABLE IF EXISTS `patients_of_doctor`;
 
 DROP VIEW IF EXISTS `patients_of_doctor`;
-CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `patients_of_doctor`  AS  select `p`.`patient_id` AS `patient_id`,`p`.`fname` AS `fname`,`p`.`lname` AS `lname`,`p`.`date_of_birth` AS `date_of_birth`,`p`.`phone_number` AS `phone_number`,`p`.`gender` AS `gender`,`p`.`address` AS `address` from (`inpatient_of_doctor` `ip` join `patient` `p` on(`ip`.`inpatient_id` = `p`.`patient_id`)) union select `p`.`patient_id` AS `patient_id`,`p`.`fname` AS `fname`,`p`.`lname` AS `lname`,`p`.`date_of_birth` AS `date_of_birth`,`p`.`phone_number` AS `phone_number`,`p`.`gender` AS `gender`,`p`.`address` AS `address` from (`outpatient_of_doctor` `op` join `patient` `p` on(`op`.`outpatient_id` = `p`.`patient_id`)) ;
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `patients_of_doctor`  AS  select `p`.`patient_id` AS `patient_id`,`p`.`fname` AS `fname`,`p`.`lname` AS `lname`,`p`.`date_of_birth` AS `date_of_birth`,`p`.`phone_number` AS `phone_number`,`p`.`gender` AS `gender`,`p`.`address` AS `address` from (`inpatient_of_doctor` `ip` join `patient` `p` on((`ip`.`inpatient_id` = `p`.`patient_id`))) union select `p`.`patient_id` AS `patient_id`,`p`.`fname` AS `fname`,`p`.`lname` AS `lname`,`p`.`date_of_birth` AS `date_of_birth`,`p`.`phone_number` AS `phone_number`,`p`.`gender` AS `gender`,`p`.`address` AS `address` from (`outpatient_of_doctor` `op` join `patient` `p` on((`op`.`outpatient_id` = `p`.`patient_id`))) ;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `degree`
+--
+ALTER TABLE `degree`
+  ADD PRIMARY KEY (`employee_id`,`degree_name`(20),`degree_speciality`(30),`degree_year`);
+
+--
+-- Indexes for table `department`
+--
+ALTER TABLE `department`
+  ADD PRIMARY KEY (`department_id`),
+  ADD KEY `dean_id` (`dean_id`);
+
+--
+-- Indexes for table `employee`
+--
+ALTER TABLE `employee`
+  ADD PRIMARY KEY (`employee_id`),
+  ADD KEY `Department_code` (`Department_code`);
+
+--
+-- Indexes for table `examination`
+--
+ALTER TABLE `examination`
+  ADD PRIMARY KEY (`examination_id`);
+
+--
+-- Indexes for table `examination_medication`
+--
+ALTER TABLE `examination_medication`
+  ADD PRIMARY KEY (`medication_id`,`examination_id`),
+  ADD KEY `examination_id` (`examination_id`);
+
+--
+-- Indexes for table `exams`
+--
+ALTER TABLE `exams`
+  ADD PRIMARY KEY (`examination_id`),
+  ADD KEY `examination_id` (`examination_id`),
+  ADD KEY `doctor_id` (`doctor_id`),
+  ADD KEY `exams_ibfk_1` (`outpatient_id`);
+
+--
+-- Indexes for table `inpatient`
+--
+ALTER TABLE `inpatient`
+  ADD PRIMARY KEY (`patient_id`),
+  ADD KEY `nurse_id` (`nurse_id`);
+
+--
+-- Indexes for table `medication`
+--
+ALTER TABLE `medication`
+  ADD PRIMARY KEY (`medication_id`);
+
+--
+-- Indexes for table `out_patient`
+--
+ALTER TABLE `out_patient`
+  ADD PRIMARY KEY (`patient_id`);
+
+--
+-- Indexes for table `patient`
+--
+ALTER TABLE `patient`
+  ADD PRIMARY KEY (`patient_id`);
+
+--
+-- Indexes for table `phone_number`
+--
+ALTER TABLE `phone_number`
+  ADD PRIMARY KEY (`employee_id`,`Phone_number`),
+  ADD UNIQUE KEY `unique_phone` (`Phone_number`);
+
+--
+-- Indexes for table `treatment`
+--
+ALTER TABLE `treatment`
+  ADD PRIMARY KEY (`treatment_id`);
+
+--
+-- Indexes for table `treatment_medication`
+--
+ALTER TABLE `treatment_medication`
+  ADD PRIMARY KEY (`medication_id`,`treatment_id`),
+  ADD KEY `treatment_id` (`treatment_id`);
+
+--
+-- Indexes for table `treats`
+--
+ALTER TABLE `treats`
+  ADD PRIMARY KEY (`treatment_id`),
+  ADD KEY `treatment_id` (`treatment_id`),
+  ADD KEY `doctor_id` (`doctor_id`),
+  ADD KEY `treats_ibfk_1` (`inpatient_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `department`
+--
+ALTER TABLE `department`
+  MODIFY `department_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `employee`
+--
+ALTER TABLE `employee`
+  MODIFY `employee_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=402004;
+
+--
+-- AUTO_INCREMENT for table `examination`
+--
+ALTER TABLE `examination`
+  MODIFY `examination_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `medication`
+--
+ALTER TABLE `medication`
+  MODIFY `medication_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+
+--
+-- AUTO_INCREMENT for table `treatment`
+--
+ALTER TABLE `treatment`
+  MODIFY `treatment_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
@@ -1052,6 +1184,15 @@ ALTER TABLE `treats`
   ADD CONSTRAINT `treats_ibfk_1` FOREIGN KEY (`inpatient_id`) REFERENCES `inpatient` (`patient_id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `treats_ibfk_2` FOREIGN KEY (`treatment_id`) REFERENCES `treatment` (`treatment_id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `treats_ibfk_3` FOREIGN KEY (`doctor_id`) REFERENCES `employee` (`employee_id`) ON UPDATE CASCADE;
+
+DELIMITER $$
+--
+-- Events
+--
+DROP EVENT IF EXISTS `check_medication`$$
+CREATE DEFINER=`root`@`localhost` EVENT `check_medication` ON SCHEDULE EVERY 1 MINUTE STARTS '2002-12-11 00:00:00' ON COMPLETION NOT PRESERVE ENABLE COMMENT 'Check expired medication every day' DO CALL check_expired_medication()$$
+
+DELIMITER ;
 --
 -- Database: `user`
 --
@@ -1066,14 +1207,13 @@ USE `user`;
 --
 
 DROP TABLE IF EXISTS `user`;
-CREATE TABLE IF NOT EXISTS `user` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `user` (
+  `ID` int NOT NULL,
   `username` text NOT NULL,
   `password` text NOT NULL,
   `db_username` text NOT NULL,
-  `db_password` text NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+  `db_password` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `user`
@@ -1081,14 +1221,41 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 INSERT INTO `user` (`ID`, `username`, `password`, `db_username`, `db_password`) VALUES
 (1, 'admin', 'admin', 'manager', 'manager');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
-GRANT ALL PRIVILEGES ON *.* TO `manager`@`%` IDENTIFIED BY PASSWORD '*7D2ABFF56C15D67445082FBB4ACD2DCD26C0ED57' WITH GRANT OPTION;
+# Privileges for `login`@`%`
 
-GRANT ALL PRIVILEGES ON `manager\_%`.* TO `manager`@`%`;
-GRANT USAGE ON *.* TO `login`@`%` IDENTIFIED BY PASSWORD '*497F081B3750057FE652584E2611798B53DB6389';
+GRANT USAGE ON *.* TO `login`@`%`;
 
 GRANT SELECT ON `user`.* TO `login`@`%`;
+
+
+# Privileges for `manager`@`%`
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE ON *.* TO `manager`@`%` WITH GRANT OPTION;
+
+GRANT APPLICATION_PASSWORD_ADMIN,AUDIT_ADMIN,BACKUP_ADMIN,BINLOG_ADMIN,BINLOG_ENCRYPTION_ADMIN,CLONE_ADMIN,CONNECTION_ADMIN,ENCRYPTION_KEY_ADMIN,GROUP_REPLICATION_ADMIN,INNODB_REDO_LOG_ARCHIVE,PERSIST_RO_VARIABLES_ADMIN,REPLICATION_APPLIER,REPLICATION_SLAVE_ADMIN,RESOURCE_GROUP_ADMIN,RESOURCE_GROUP_USER,ROLE_ADMIN,SERVICE_CONNECTION_ADMIN,SESSION_VARIABLES_ADMIN,SET_USER_ID,SYSTEM_USER,SYSTEM_VARIABLES_ADMIN,TABLE_ENCRYPTION_ADMIN,XA_RECOVER_ADMIN ON *.* TO `manager`@`%` WITH GRANT OPTION;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
